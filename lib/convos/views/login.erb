@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <%= erb :style %>
+    <script async defer src="/altcha.min.js" type="module"></script>
+  </head>
+  <body>
+    <h1>Login</h1>
+    <form>
+      <p>
+        <label for='password' />
+        <input type='text' id='password' name='password' />
+      </p>
+
+      <p>
+        <altcha-widget challenge='/altcha-challenge'></altcha-widget>
+      </p>
+      
+      <p>
+        <input type='submit' value='Login' formaction='/login' formmethod='post' />
+      </p>
+    </form>
+  </body>
+</html>

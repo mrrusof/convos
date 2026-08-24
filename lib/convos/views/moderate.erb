@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <%= erb :style %>
+  </head>
+
+  <body>
+  <h1>Moderate</h1>
+    <% unmoderated = Comment.where(status: 'unmoderated') %>
+
+    <p><a class='convos-logout' href='/logout'>Logout</a></p>
+
+    <% if unmoderated.empty? %>
+    <p>No comments to moderate.</p>
+    <% end %>
+
+    <ul class='convos-comments-list'>
+      <% unmoderated.each do |comment| %>
+      <li>
+        <p class='convos-comment-title'><%= comment.user.username %></p>
+        <p class='convos-comment-body'><%= comment.body %></p>
+        <form>
+          <p>
+            <input type='submit' value='Approve' formaction='/comments/<%= comment.id %>/approve' formmethod='post' />
+            <input type='submit' value='Reject' formaction='/comments/<%= comment.id %>/reject' formmethod='post' />
+          </p>
+        </form>
+      </li>
+      <% end %>
+    </ul>
+  </body>
+</html>

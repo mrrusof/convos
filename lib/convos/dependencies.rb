@@ -1,0 +1,5 @@
+require 'sinatra/base'
+require 'sinatra/activerecord'
+require 'bcrypt'
+require 'securerandom'
+require 'altcha'

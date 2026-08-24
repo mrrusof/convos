@@ -1,0 +1,51 @@
+class ConvosCommentsSection extends HTMLElement {
+    constructor() {
+        super();
+    }
+
+    async connectedCallback() {
+        const host = '<%= Convos::Configuration.host %>';
+        const thread_id = this.getAttribute("thread_id");
+
+        if (thread_id == null) {
+            this.textContent = 'Missing thread_id';
+            return;
+        }
+
+        const return_to = this.getAttribute("return_to");
+
+        if (return_to == null) {
+            this.textContent = 'Missing return_to';
+            return
+        }
+
+        const params = new URLSearchParams(window.location.search)
+        const query = new URLSearchParams({
+            err_msg: params.get("convos_err_msg") || "",
+            return_to: return_to
+        });
+
+        try {
+            const response = await fetch(
+                `${host}/threads/${encodeURIComponent(thread_id)}/template?${query}`
+            );
+
+            if (!response.ok) {
+                throw new Error(`Request failed: ${response.status}`);
+            }
+
+            await import(`${host}/altcha.min.js`)
+            await customElements.whenDefined('altcha-widget');
+
+            this.innerHTML = await response.text();
+            this.querySelector('altcha-widget').setAttribute(
+                'challenge', `${host}/altcha-challenge`
+            );
+        } catch (error) {
+            console.error(error);
+            this.textContent = 'Could not load thread';
+        }
+    }
+}
+
+customElements.define("convos-comments-section", ConvosCommentsSection);

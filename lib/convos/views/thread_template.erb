@@ -1,0 +1,20 @@
+<%= erb :style %>
+
+<ul class='convos-comments-list'>
+  <% Comment.thread(params[:thread_id]).each do |comment| %>
+  <% next if comment.status != 'published' %>
+  <li>
+    <p class='convos-comment-title'><%= comment.user.username %></p>
+    <p class='convos-comment-body'><%= comment.body %></p>
+  </li>
+  <% end %>
+  <li>
+    <p>
+      <%= erb :comment_form, locals: { thread_id: params[:thread_id], return_to: params[:return_to] } %>
+    </p>
+  </li>
+</ul>
+<% if params[:err_msg] %>
+<p class='convos-err-msg'><%= params[:err_msg] %></p>
+<% end %>
+

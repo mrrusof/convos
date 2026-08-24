@@ -1,0 +1,74 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'bundler'
+
+def print_usage
+  require 'convos/configuration'
+
+  env_vars_desc = Convos::Configuration::CONFIG_KEYS.map { |k, d| 
+    desc = d.each_line.map { |l| "    #{l}" }.join
+    "- #{k}:\n#{desc}"
+  }.join("\n")
+
+  puts <<~EOS
+          Usage: <ENV_VAR=VALUE>...<ENV_VAR=VALUE> convos <COMMAND>
+
+          Commands:
+          - server: Run the convos web API.
+          - db:create: Create database.
+          - db:migrate: Migrate the database.
+          - db:load_schema: Load database schema.
+
+          Environment variables:
+          #{env_vars_desc}
+          EOS
+end
+
+def configure_db_tasks
+  tasks = ActiveRecord::Tasks::DatabaseTasks
+
+  tasks.env = Convos::Configuration.rack_env
+  tasks.root = File.expand_path('..', __dir__)
+  tasks.db_dir = File.join(tasks.root, 'db')
+  tasks.migrations_paths = [File.join(tasks.db_dir, 'migrate')]
+
+  tasks
+end
+
+if ARGV.empty?
+  print_usage
+  exit
+end
+
+case ARGV.pop
+when 'server'
+  require 'convos'
+
+  Convos::Api.run!
+
+when 'db:create'
+  require 'convos'
+
+  tasks = configure_db_tasks
+  tasks.create_current
+
+when 'db:load_schema'
+  require 'convos'
+
+  tasks = configure_db_tasks
+  tasks.load_schema_current(
+    :ruby,
+    File.join(tasks.db_dir, 'schema.rb'),
+    Convos::Configuration.rack_env
+  )
+
+when 'db:migrate'
+  require 'convos'
+
+  tasks = configure_db_tasks
+  tasks.migrate
+
+else
+  print_usage
+end

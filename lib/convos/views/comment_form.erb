@@ -1,0 +1,38 @@
+<details>
+  <summary>
+    <span class='convos-form-toggle'>Post a comment</span>
+  </summary>
+  <div class='convos-comment-form'>
+    <p>
+      <b>New users:</b> choose a username and password with your comment.<br />
+      <b>Returning users:</b> enter your previously selected username and password with your comment.
+    </p>
+    <form>
+      <input type='hidden' id='thread_id' name='thread_id' value='<%= thread_id %>' />
+      <input type='hidden' id='return_to' name='return_to' value='<%= return_to %>' />
+
+      <p>
+        <label for='username'>Username</label>
+        <input type='text' id='username' name='username' />
+      </p>
+
+      <p>
+        <label for='password'>Password</label>
+        <input type='password' id='password' name='password' />
+      </p>
+
+      <p>
+        <label for='comment'>Comment</label>
+        <input type='text' id='comment' name='comment' />
+      </p>
+
+      <p>
+        <altcha-widget challenge='/altcha-challenge'></altcha-widget>
+      </p>
+
+      <p>
+        <input type='submit' value='Post comment' formaction='<%= Convos::Configuration.host %>/comments' formmethod='post' />
+      </p>
+    </form>
+  </div>
+</details>
