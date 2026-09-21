@@ -12,12 +12,7 @@ class ConvosCommentsSection extends HTMLElement {
             return;
         }
 
-        const return_to = this.getAttribute("return_to");
-
-        if (return_to == null) {
-            this.textContent = 'Missing return_to';
-            return
-        }
+        const return_to = window.location.href;
 
         const params = new URLSearchParams(window.location.search)
         const query = new URLSearchParams({

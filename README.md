@@ -68,8 +68,7 @@ Add the following to each page that needs a comments section.
 <script async defer src="<Hostname of your server>/convos.js" type="module"></script>
 
 <convos-comments-section
-  thread_id='<A unique identifier string, up to you>'
-  return_to='<URL to redirect to after posting a comment' />
+  thread_id='<A unique identifier string, up to you>' />
 ```
 
 # Development

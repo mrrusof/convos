@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'uri'
+
 module Convos
   class Api < Sinatra::Base
     set :bind, '0.0.0.0'
@@ -162,7 +164,15 @@ module Convos
         user.save!
       end
 
-      redirect "#{params[:return_to]}?convos_err_msg=Wrong password" unless user.authenticate(params[:password])
+      unless user.authenticate(params[:password])
+        return_uri = URI.parse(params[:return_to])
+        query = URI.decode_www_form(return_uri.query || '')
+        query.reject! { |key, _| key == 'convos_err_msg' }
+        query << ['convos_err_msg', 'Wrong password']
+        return_uri.query = URI.encode_www_form(query)
+
+        redirect return_uri.to_s
+      end
 
       thread_root = Comment.find_by(thread_id: thread_id)
 
