@@ -5,6 +5,7 @@
   <% next if comment.status != 'published' %>
   <li>
     <p class='convos-comment-title'><%= comment.user.username %></p>
+    <p class='convos-comment-date'><%= comment.created_at %></p>
     <p class='convos-comment-body'><%= comment.body %></p>
   </li>
   <% end %>
