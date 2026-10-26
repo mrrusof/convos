@@ -152,6 +152,10 @@ module Convos
     end
 
     post '/comments' do
+      return_uri = URI.parse(params[:return_to])
+
+      redirect return_uri.to_s unless validate_altcha
+
       thread_id = params[:thread_id]
 
       user = User.create_or_find_by(username: params[:username]) do |u|
@@ -159,13 +163,11 @@ module Convos
       end
       
       if user.new_record?
-        puts "user.password = #{params[:password]}"
         user.password = params[:password]
         user.save!
       end
 
       unless user.authenticate(params[:password])
-        return_uri = URI.parse(params[:return_to])
         query = URI.decode_www_form(return_uri.query || '')
         query.reject! { |key, _| key == 'convos_err_msg' }
         query << ['convos_err_msg', 'Wrong password']

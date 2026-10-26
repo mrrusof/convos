@@ -11,6 +11,7 @@ require 'capybara/minitest'
 require 'selenium-webdriver'
 require 'faker'
 require 'base64'
+require 'rack/test'
 
 Capybara.configure do |config|
   config.app = Convos::Api

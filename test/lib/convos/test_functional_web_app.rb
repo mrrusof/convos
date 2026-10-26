@@ -115,6 +115,25 @@ class TestFunctionalWebApp < Minitest::Test
     assert_text 'Login'
   end
 
+  def test_post_comment_validates_altcha
+    client = Rack::Test::Session.new(Rack::MockSession.new(Convos::Api))
+    comment_count = Comment.count
+    return_to = 'http://example.org/threads/123'
+
+    client.post '/comments', {
+      thread_id: '123',
+      username: Faker::Internet.username,
+      password: Faker::Internet.password,
+      comment: Faker::Lorem.paragraph,
+      return_to: return_to
+      # Intentionally omit :altcha.
+    }
+
+    assert_equal comment_count, Comment.count
+    assert_equal 302, client.last_response.status
+    assert_equal return_to, client.last_response.headers['location']
+  end
+
   def test_not_found
     visit '/does-not-exist'
     assert_text 'Not found'
