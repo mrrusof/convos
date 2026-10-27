@@ -14,6 +14,8 @@ module Convos
     set :session_secret, Configuration.session_secret
     enable :sessions
 
+    use Rack::Protection::AuthenticityToken
+
     enable :logging if Configuration.rack_env != 'test'
 
     set :show_exceptions, false
@@ -64,6 +66,19 @@ module Convos
       return Altcha::V1.verify_solution(altcha_payload, Configuration.altcha_hmac_secret, true)
     end
 
+    def set_access_control_headers
+      headers 'Access-Control-Allow-Origin' => Configuration.access_control_allow_origin
+      headers 'Access-Control-Allow-Credentials' => 'true'
+    end
+
+    before do
+      if request.path_info == '/login' ||
+         request.path_info == '/moderate' ||
+         request.path_info.match?(%r{\A/threads/[^/]+/template\z})
+        headers 'Cache-Control' => 'no-store'
+      end
+    end
+
     get '/' do
       redirect '/login'
     end
@@ -92,14 +107,14 @@ module Convos
     end
 
     get '/altcha.min.js' do
-      headers 'Access-Control-Allow-Origin' => Configuration.access_control_allow_origin
+      set_access_control_headers
       content_type 'application/javascript'
 
       erb :altcha_min_js
     end
 
     get '/altcha-challenge' do
-      headers 'Access-Control-Allow-Origin' => Configuration.access_control_allow_origin
+      set_access_control_headers
       content_type :json
 
       options = Altcha::V1::ChallengeOptions.new(
@@ -140,12 +155,12 @@ module Convos
     end
 
     get '/threads/:thread_id/template' do
-      headers 'Access-Control-Allow-Origin' => Configuration.access_control_allow_origin
+      set_access_control_headers
       erb :thread_template
     end
 
     get '/convos.js' do
-      headers 'Access-Control-Allow-Origin' => Configuration.access_control_allow_origin
+      set_access_control_headers
       content_type 'application/javascript'
 
       erb :convos_js

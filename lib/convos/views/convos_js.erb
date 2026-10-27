@@ -22,7 +22,8 @@ class ConvosCommentsSection extends HTMLElement {
 
         try {
             const response = await fetch(
-                `${host}/threads/${encodeURIComponent(thread_id)}/template?${query}`
+                `${host}/threads/${encodeURIComponent(thread_id)}/template?${query}`,
+                 { credentials: 'include' }
             );
 
             if (!response.ok) {

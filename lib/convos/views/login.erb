@@ -6,6 +6,8 @@
   <body>
     <h1>Login</h1>
     <form>
+      <input type='hidden' id='authenticity_token' name='authenticity_token' value='<%= Rack::Protection::AuthenticityToken.token(session) %>' />
+
       <p>
         <label for='password' />
         <input type='text' id='password' name='password' />
